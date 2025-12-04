@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<h3 class="text-info">Eventos</h3>
+<ul class="list-group">
+  {% for e in eventos %}
+    <li class="list-group-item bg-dark text-light">
+      <strong>{{ e.titulo }}</strong><br>
+      <small>{{ e.fecha.strftime('%d %b %Y %H:%M') }}</small><br>
+      <p>{{ e.descripcion }}</p>
+    </li>
+  {% else %}
+    <li class="list-group-item bg-dark text-light">No hay eventos</li>
+  {% endfor %}
+</ul>
+{% endblock %}

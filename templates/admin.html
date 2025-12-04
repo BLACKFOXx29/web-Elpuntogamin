@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block content %}
+<h3 class="text-warning">Panel de administrador</h3>
+
+<div class="row">
+  <div class="col-md-6">
+    <h5 class="text-info">Crear evento</h5>
+    <form method="post">
+      {{ eform.hidden_tag() }}
+      {{ eform.titulo(class="form-control mb-2") }}
+      {{ eform.descripcion(class="form-control mb-2") }}
+      {{ eform.fecha(class="form-control mb-2") }}
+      {{ eform.submit(class="btn btn-warning") }}
+    </form>
+
+    <h5 class="mt-4 text-info">Eventos existentes</h5>
+    <ul class="list-group">
+      {% for e in eventos %}
+        <li class="list-group-item bg-dark text-light">{{ e.titulo }} - {{ e.fecha.strftime('%d %b %Y %H:%M') }}</li>
+      {% else %}
+        <li class="list-group-item bg-dark text-light">Sin eventos</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <div class="col-md-6">
+    <h5 class="text-info">Crear producto</h5>
+    <form method="post">
+      {{ pform.hidden_tag() }}
+      {{ pform.nombre(class="form-control mb-2") }}
+      {{ pform.descripcion(class="form-control mb-2") }}
+      {{ pform.precio(class="form-control mb-2") }}
+      {{ pform.stock(class="form-control mb-2") }}
+      {{ pform.submit(class="btn btn-warning") }}
+    </form>
+
+    <h5 class="mt-4 text-info">Productos</h5>
+    <ul class="list-group">
+      {% for p in productos %}
+        <li class="list-group-item bg-dark text-light">{{ p.nombre }} - ${{ '%.2f'|format(p.precio) }}</li>
+      {% else %}
+        <li class="list-group-item bg-dark text-light">Sin productos</li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+{% endblock %}

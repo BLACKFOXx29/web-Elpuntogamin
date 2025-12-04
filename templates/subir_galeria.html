@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<h3 class="text-info">Subir imagen</h3>
+<form method="post" enctype="multipart/form-data">
+  {{ form.hidden_tag() }}
+  <div class="mb-2">
+    {{ form.file.label }} {{ form.file(class="form-control") }}
+  </div>
+  <div class="mb-2">
+    {{ form.descripcion.label }} {{ form.descripcion(class="form-control") }}
+  </div>
+  <div>
+    {{ form.submit(class="btn btn-info") }}
+  </div>
+</form>
+{% endblock %}
