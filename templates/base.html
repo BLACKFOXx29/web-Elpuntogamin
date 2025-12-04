@@ -3,17 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>El Punto Gaming</title>
 
-    <!-- CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <title>El Punto Gaming</title>
 
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
 
-    <!-- Bootstrap -->
+    <!-- CSS del proyecto -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom border-info">
+
+</head>
+<body class="bg-dark text-light">
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom border-info">
   <div class="container">
 
     <!-- LOGO + NOMBRE -->
@@ -24,18 +30,7 @@
         El Punto Gaming
     </a>
 
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom border-info">
-  <div class="container">
-
-    <!-- LOGO + NOMBRE -->
-    <a class="navbar-brand text-info fw-bold d-flex align-items-center" href="{{ url_for('index') }}">
-        <img src="{{ url_for('static', filename='black-cartoon-fox-wallpaper-wmc4yyspv9y8lizt.png') }}"
-             alt="Logo"
-             style="height:40px; width:auto; margin-right:10px;">
-        El Punto Gaming
-    </a>
-
-    <!-- BOTÓN MENU (3 BARRAS) -->
+    <!-- BOTÓN DE TRES BARRAS -->
     <button class="navbar-toggler" 
             type="button" 
             data-bs-toggle="collapse" 
@@ -46,7 +41,7 @@
         <span class="navbar-toggler-icon"></span>
     </button>
 
-    <!-- CONTENIDO DEL MENÚ -->
+    <!-- MENÚ -->
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto">
 
@@ -74,60 +69,6 @@
         <!-- NUEVO: REGISTRARSE -->
         <li class="nav-item">
           <a class="nav-link text-info" href="{{ url_for('register') }}">Registrarse</a>
-        </li>
-
-        {% if current_user.is_authenticated %}
-        <li class="nav-item">
-          <a class="nav-link text-warning" href="{{ url_for('logout') }}">Cerrar sesión</a>
-        </li>
-        {% else %}
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('login') }}">Iniciar sesión</a>
-        </li>
-        {% endif %}
-
-      </ul>
-    </div>
-
-  </div>
-</nav>
-</head>
-
-<body class="bg-dark text-light">
-
-<!-- NAVBAR -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom border-info">
-  <div class="container">
-
-    <!-- LOGO + NOMBRE -->
-    <a class="navbar-brand text-info fw-bold d-flex align-items-center" href="{{ url_for('index') }}">
-        <img src="{{ url_for('static', filename='black-cartoon-fox-wallpaper-wmc4yyspv9y8lizt.png') }}"
-             alt="Logo"
-             style="height:40px; width:auto; margin-right:10px;">
-        El Punto Gaming
-    </a>
-
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav ms-auto">
-
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('index') }}">Inicio</a>
-        </li>
-
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('miembros') }}">Miembros</a>
-        </li>
-
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('eventos') }}">Eventos</a>
-        </li>
-
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('tienda') }}">Tienda</a>
         </li>
 
         {% if current_user.is_authenticated %}

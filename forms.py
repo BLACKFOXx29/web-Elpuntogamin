@@ -1,39 +1,42 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField, FloatField, IntegerField, FileField, DateTimeField
-from wtforms.validators import DataRequired, Email, Length, EqualTo
+from wtforms import StringField, PasswordField, SubmitField, TextAreaField, BooleanField
+from wtforms.validators import DataRequired, Length, EqualTo, Email, Optional
 
 class RegisterForm(FlaskForm):
-    username = StringField('Usuario', validators=[DataRequired(), Length(3, 80)])
-    email = StringField('Email', validators=[DataRequired(), Email()])
-    password = PasswordField('Contraseña', validators=[DataRequired(), Length(6, 128)])
-    password2 = PasswordField('Repite la contraseña', validators=[DataRequired(), EqualTo('password')])
-    submit = SubmitField('Registrarse')
+    username = StringField(
+        "Usuario",
+        validators=[DataRequired(message="El usuario es obligatorio"), Length(min=3, max=30)]
+    )
+    email = StringField(
+        "Email",
+        validators=[Optional(), Email(message="Introduce un email válido")]
+    )
+    password = PasswordField(
+        "Contraseña",
+        validators=[DataRequired(message="La contraseña es obligatoria"), Length(min=6)]
+    )
+    password2 = PasswordField(
+        "Repite la contraseña",
+        validators=[DataRequired(message="Repite la contraseña"), EqualTo('password', message="Las contraseñas no coinciden")]
+    )
+    submit = SubmitField("Registrarse")
 
 class LoginForm(FlaskForm):
-    username = StringField('Usuario', validators=[DataRequired()])
-    password = PasswordField('Contraseña', validators=[DataRequired()])
-    remember = BooleanField('Recordarme')
-    submit = SubmitField('Iniciar sesión')
+    username = StringField(
+        "Usuario",
+        validators=[DataRequired(message="El usuario es obligatorio")]
+    )
+    password = PasswordField(
+        "Contraseña",
+        validators=[DataRequired(message="La contraseña es obligatoria")]
+    )
+    remember = BooleanField("Recordarme")
+    submit = SubmitField("Iniciar sesión")
 
-class EventoForm(FlaskForm):
-    titulo = StringField('Título', validators=[DataRequired()])
-    descripcion = TextAreaField('Descripción')
-    fecha = DateTimeField('Fecha (YYYY-MM-DD HH:MM)', format='%Y-%m-%d %H:%M', validators=[DataRequired()])
-    submit = SubmitField('Guardar evento')
+class ForoPostForm(FlaskForm):
+    contenido = TextAreaField(
+        "Mensaje",
+        validators=[DataRequired(message="Escribe algo"), Length(min=1, max=2000, message="Máximo 2000 caracteres")]
+    )
+    submit = SubmitField("Publicar")
 
-class ImagenForm(FlaskForm):
-    file = FileField('Seleccionar imagen', validators=[DataRequired()])
-    descripcion = StringField('Descripción')
-    submit = SubmitField('Subir imagen')
-
-class MensajeForm(FlaskForm):
-    autor = StringField('Nombre', validators=[DataRequired()])
-    contenido = TextAreaField('Mensaje', validators=[DataRequired(), Length(max=500)])
-    submit = SubmitField('Enviar')
-
-class ProductoForm(FlaskForm):
-    nombre = StringField('Nombre', validators=[DataRequired()])
-    descripcion = TextAreaField('Descripción')
-    precio = FloatField('Precio', validators=[DataRequired()])
-    stock = IntegerField('Stock', validators=[DataRequired()])
-    submit = SubmitField('Guardar producto')

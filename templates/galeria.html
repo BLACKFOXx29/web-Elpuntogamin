@@ -1,22 +1,37 @@
 {% extends "base.html" %}
 {% block content %}
 <h3 class="text-info">Galería</h3>
+
 {% if current_user.is_authenticated %}
-  <a href="{{ url_for('subir_galeria') }}" class="btn btn-sm btn-outline-info mb-3">Subir imagen</a>
+  <div class="mb-3">
+    <a href="{{ url_for('subir_galeria') }}" class="btn btn-sm btn-outline-info">Subir imagen</a>
+  </div>
 {% endif %}
+
 <div class="row">
-  {% for img in imagenes %}
-    <div class="col-md-4 mb-3">
-      <div class="card bg-dark" style="border:1px solid #222;">
-        <img src="{{ url_for('uploaded_file', filename=img.filename) }}" class="card-img-top" style="height:200px;object-fit:cover;">
-        <div class="card-body">
-          <p class="card-text">{{ img.descripcion }}</p>
-          <small class="text-muted">Subida: {{ img.uploaded_at.strftime('%d %b %Y') }}</small>
+  {% if imagenes and imagenes|length > 0 %}
+    {% for img in imagenes %}
+      <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
+        <div class="card h-100 bg-dark" style="border:1px solid #222;">
+          <a href="{{ url_for('uploaded_file', filename=img.filename) }}" target="_blank">
+            <img src="{{ url_for('uploaded_file', filename=img.filename) }}" class="card-img-top" style="height:180px; object-fit:cover;">
+          </a>
+          <div class="card-body">
+            <p class="card-text" style="min-height:40px;">{{ img.descripcion or 'Sin descripción' }}</p>
+          </div>
+          <div class="card-footer text-muted small" style="background:#0b0b0b; border-top:1px solid #111;">
+            Subida: {{ img.uploaded_at.strftime('%d %b %Y') }}
+          </div>
         </div>
       </div>
-    </div>
+    {% endfor %}
   {% else %}
-    <p>No hay imágenes aún.</p>
-  {% endfor %}
+    <div class="col-12">
+      <div class="card p-4 bg-dark" style="border:1px dashed #444;">
+        <h5 class="text-muted">Aún no hay imágenes en la galería.</h5>
+        <p>Si eres miembro, puedes <a href="{{ url_for('register') }}">registrarte</a> o <a href="{{ url_for('login') }}">iniciar sesión</a> para subir imágenes.</p>
+      </div>
+    </div>
+  {% endif %}
 </div>
 {% endblock %}

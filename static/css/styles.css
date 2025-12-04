@@ -1,4 +1,37 @@
-body { background: #050506; color:#ddd; font-family: 'Segoe UI', Tahoma, sans-serif; }
-a { color: #9701fa; }
-.btn-info { background: #000000; border: none; }
-.card { border-radius: 12px; }
+body {
+    background-color: #75006f;
+    color: #ffffff;
+    font-family: Arial, sans-serif;
+}
+
+.navbar-brand {
+    font-size: 1.4rem;
+}
+
+a {
+    text-decoration: none;
+}
+
+a:hover {
+    color: #75006f;
+}
+
+/* Cards */
+.card {
+    background-color: #ffffff;
+    border: 1px solid #75006f;
+}
+
+/* Botones gamer */
+.btn-gamer {
+    background-color: #75006f;
+    color: #ffffff;
+    border-radius: 5px;
+    padding: 6px 15px;
+    transition: 0.3s;
+}
+
+.btn-gamer:hover {
+    background-color: #75006f;
+    color: #ffffff;
+}

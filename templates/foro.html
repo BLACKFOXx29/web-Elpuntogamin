@@ -1,30 +1,21 @@
 {% extends "base.html" %}
 {% block content %}
-<h3 class="text-info">Foro del club</h3>
-<form method="post">
-  {{ form.hidden_tag() }}
-  <div class="mb-2">
-    {{ form.autor(class="form-control", placeholder="Tu nombre") }}
-  </div>
-  <div class="mb-2">
-    {{ form.contenido(class="form-control", rows=3, placeholder="Escribe tu mensaje") }}
-  </div>
-  <div>
-    {{ form.submit(class="btn btn-info") }}
-  </div>
+
+<h2 class="text-info">Foro</h2>
+
+<form method="POST">
+    <textarea name="contenido" class="form-control mb-3" placeholder="Escribe tu mensaje..."></textarea>
+    <button class="btn btn-gamer" type="submit">Publicar</button>
 </form>
 
 <hr>
-<div>
-  {% for m in mensajes %}
-    <div class="card mb-2 bg-dark" style="border:1px solid #333;">
-      <div class="card-body">
-        <small class="text-muted">{{ m.autor }} - {{ m.created_at.strftime('%d %b %Y %H:%M') }}</small>
-        <p>{{ m.contenido }}</p>
-      </div>
-    </div>
-  {% else %}
-    <p>No hay mensajes.</p>
-  {% endfor %}
+
+{% for post in posts %}
+<div class="card p-3 mt-3">
+    <strong>{{ post.autor }}</strong>
+    <p>{{ post.contenido }}</p>
+    <small>{{ post.fecha }}</small>
 </div>
+{% endfor %}
+
 {% endblock %}
