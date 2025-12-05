@@ -1,61 +1,47 @@
 {% extends "base.html" %}
 {% block content %}
-
-<h2 class="text-info mb-4">Panel de Administración</h2>
+<h3 class="text-warning">Panel de administrador</h3>
 
 <div class="row">
+  <div class="col-md-6">
+    <h5 class="text-info">Crear evento</h5>
+    <form method="post">
+      {{ eform.hidden_tag() }}
+      {{ eform.titulo(class="form-control mb-2") }}
+      {{ eform.descripcion(class="form-control mb-2") }}
+      {{ eform.fecha(class="form-control mb-2") }}
+      {{ eform.submit(class="btn btn-warning") }}
+    </form>
 
-    <!-- USUARIOS -->
-    <div class="col-lg-6 mb-4">
-        <div class="card p-3">
-            <h4 class="text-info">Usuarios Registrados</h4>
-            <hr>
+    <h5 class="mt-4 text-info">Eventos existentes</h5>
+    <ul class="list-group">
+      {% for e in eventos %}
+        <li class="list-group-item bg-dark text-light">{{ e.titulo }} - {{ e.fecha.strftime('%d %b %Y %H:%M') }}</li>
+      {% else %}
+        <li class="list-group-item bg-dark text-light">Sin eventos</li>
+      {% endfor %}
+    </ul>
+  </div>
 
-            {% if usuarios %}
-                {% for user in usuarios %}
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <span>
-                            <strong>{{ user.username }}</strong><br>
-                            <small>ID: {{ user.id }}</small>
-                        </span>
+  <div class="col-md-6">
+    <h5 class="text-info">Crear producto</h5>
+    <form method="post">
+      {{ pform.hidden_tag() }}
+      {{ pform.nombre(class="form-control mb-2") }}
+      {{ pform.descripcion(class="form-control mb-2") }}
+      {{ pform.precio(class="form-control mb-2") }}
+      {{ pform.stock(class="form-control mb-2") }}
+      {{ pform.submit(class="btn btn-warning") }}
+    </form>
 
-                        <form method="POST" action="{{ url_for('admin_delete_user', user_id=user.id) }}">
-                            <button class="btn btn-sm btn-danger">Eliminar</button>
-                        </form>
-                    </div>
-                    <hr>
-                {% endfor %}
-            {% else %}
-                <p>No hay usuarios registrados todavía.</p>
-            {% endif %}
-        </div>
-    </div>
-
-    <!-- POSTS DEL FORO -->
-    <div class="col-lg-6 mb-4">
-        <div class="card p-3">
-            <h4 class="text-info">Publicaciones del Foro</h4>
-            <hr>
-
-            {% if posts %}
-                {% for post in posts %}
-                    <div class="mb-3">
-                        <strong>{{ post.autor }}</strong>
-                        <p>{{ post.contenido }}</p>
-                        <small>{{ post.fecha }}</small>
-
-                        <form method="POST" action="{{ url_for('admin_delete_post', post_id=post.id) }}">
-                            <button class="btn btn-sm btn-danger">Eliminar Post</button>
-                        </form>
-                    </div>
-                    <hr>
-                {% endfor %}
-            {% else %}
-                <p>No hay publicaciones en el foro todavía.</p>
-            {% endif %}
-        </div>
-    </div>
-
+    <h5 class="mt-4 text-info">Productos</h5>
+    <ul class="list-group">
+      {% for p in productos %}
+        <li class="list-group-item bg-dark text-light">{{ p.nombre }} - ${{ '%.2f'|format(p.precio) }}</li>
+      {% else %}
+        <li class="list-group-item bg-dark text-light">Sin productos</li>
+      {% endfor %}
+    </ul>
+  </div>
 </div>
-
 {% endblock %}

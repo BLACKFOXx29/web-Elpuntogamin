@@ -1,120 +1,171 @@
-from flask import Flask, render_template, redirect, url_for, request, flash
-from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager, login_user, logout_user, current_user, login_required, UserMixin
+import os
+from flask import Flask, render_template, redirect, url_for, request, flash, send_from_directory
 from config import Config
+from models import db, User, Miembro, Evento, Imagen, Mensaje, Producto
+from forms import RegisterForm, LoginForm, EventoForm, ImagenForm, MensajeForm, ProductoForm
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from datetime import datetime
+from werkzeug.utils import secure_filename
+from datetime import datetime
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in Config.ALLOWED_EXTENSIONS
 
 app = Flask(__name__)
 app.config.from_object(Config)
 
-db = SQLAlchemy(app)
+db.init_app(app)
+
 login_manager = LoginManager(app)
-login_manager.login_view = "login"
+login_manager.login_view = 'login'
 
-# -----------------------------
-# Models
-# -----------------------------
-
-class User(UserMixin, db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(100), nullable=False, unique=True)
-    password = db.Column(db.String(200), nullable=False)
-
-class ForoPost(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    autor = db.Column(db.String(100))
-    contenido = db.Column(db.Text)
-    fecha = db.Column(db.DateTime, default=datetime.utcnow)
-
-# -----------------------------
-# Login Manager
-# -----------------------------
+# Asegúrate de existir la carpeta de uploads
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-# -----------------------------
-# Context: Fecha global
-# -----------------------------
-
 @app.context_processor
 def inject_datetime():
-    return {"datetime": datetime}
+    return {'datetime': datetime}
 
-# -----------------------------
-# Rutas del sitio
-# -----------------------------
-
-@app.route("/")
+@app.route('/')
 def index():
-    return render_template("index.html")
+    eventos = Evento.query.order_by(Evento.fecha.asc()).limit(3).all()
+    imagenes = Imagen.query.order_by(Imagen.uploaded_at.desc()).limit(5).all()
+    productos = Producto.query.limit(3).all()
+    return render_template('index.html', eventos=eventos, imagenes=imagenes, productos=productos)
 
-@app.route("/miembros")
-def miembros():
-    return render_template("miembros.html")
-
-@app.route("/eventos")
-def eventos():
-    return render_template("eventos.html")
-
-@app.route("/tienda")
-def tienda():
-    return render_template("tienda.html")
-
-@app.route("/foro", methods=["GET", "POST"])
-def foro():
-    if request.method == "POST":
-        if not current_user.is_authenticated:
-            flash("Debes iniciar sesión para publicar.")
-            return redirect(url_for("login"))
-
-        contenido = request.form.get("contenido")
-        post = ForoPost(autor=current_user.username, contenido=contenido)
-        db.session.add(post)
-        db.session.commit()
-
-    posts = ForoPost.query.order_by(ForoPost.fecha.desc()).all()
-    return render_template("foro.html", posts=posts)
-
-@app.route("/register", methods=["GET", "POST"])
+@app.route('/register', methods=['GET','POST'])
 def register():
-    if request.method == "POST":
-        username = request.form.get("username")
-        password = request.form.get("password")
-
-        if User.query.filter_by(username=username).first():
-            flash("El usuario ya existe.")
-            return redirect(url_for("register"))
-
-        user = User(username=username, password=password)
+    form = RegisterForm()
+    if form.validate_on_submit():
+        if User.query.filter((User.username==form.username.data)|(User.email==form.email.data)).first():
+            flash('Usuario o email ya registrado', 'warning')
+            return redirect(url_for('register'))
+        hashed = generate_password_hash(form.password.data)
+        user = User(username=form.username.data, email=form.email.data, password_hash=hashed)
         db.session.add(user)
         db.session.commit()
-        flash("Registro completado, ahora inicia sesión.")
-        return redirect(url_for("login"))
+        # Añadir a tabla Miembro por defecto
+        miembro = Miembro(nombre=form.username.data, usuario=form.username.data, bio='Nuevo miembro')
+        db.session.add(miembro)
+        db.session.commit()
+        flash('Registro exitoso. Ya puedes iniciar sesión.', 'success')
+        return redirect(url_for('login'))
+    return render_template('register.html', form=form)
 
-    return render_template("register.html")
-
-@app.route("/login", methods=["GET", "POST"])
+@app.route('/login', methods=['GET','POST'])
 def login():
-    if request.method == "POST":
-        username = request.form.get("username")
-        password = request.form.get("password")
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=form.username.data).first()
+        if user and check_password_hash(user.password_hash, form.password.data):
+            login_user(user, remember=form.remember.data)
+            flash('Has iniciado sesión', 'success')
+            return redirect(url_for('index'))
+        flash('Usuario o contraseña incorrectos', 'danger')
+    return render_template('login.html', form=form)
 
-        user = User.query.filter_by(username=username, password=password).first()
-        if user:
-            login_user(user)
-            return redirect(url_for("index"))
-        flash("Credenciales incorrectas.")
-
-    return render_template("login.html")
-
-@app.route("/logout")
+@app.route('/logout')
+@login_required
 def logout():
     logout_user()
-    return redirect(url_for("index"))
+    flash('Sesión cerrada', 'info')
+    return redirect(url_for('index'))
 
-# -----------------------------
+@app.route('/miembros')
+def miembros():
+    lista = Miembro.query.order_by(Miembro.joined.desc()).all()
+    return render_template('miembros.html', miembros=lista)
 
-if __name__ == "__main__":
+@app.route('/eventos')
+def eventos():
+    lista = Evento.query.order_by(Evento.fecha.asc()).all()
+    return render_template('eventos.html', eventos=lista)
+
+@app.route('/galeria')
+def galeria():
+    imgs = Imagen.query.order_by(Imagen.uploaded_at.desc()).all()
+    return render_template('galeria.html', imagenes=imgs)
+
+@app.route('/subir_galeria', methods=['GET','POST'])
+@login_required
+def subir_galeria():
+    form = ImagenForm()
+    if form.validate_on_submit():
+        file = form.file.data
+        if file and allowed_file(file.filename):
+            filename = secure_filename(f"{datetime.utcnow().timestamp()}_{file.filename}")
+            filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file.save(filepath)
+            imagen = Imagen(filename=filename, descripcion=form.descripcion.data)
+            db.session.add(imagen)
+            db.session.commit()
+            flash('Imagen subida con éxito', 'success')
+            return redirect(url_for('galeria'))
+        flash('Formato no permitido', 'danger')
+    return render_template('subir_galeria.html', form=form)
+
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+@app.route('/foro', methods=['GET','POST'])
+def foro():
+    form = MensajeForm()
+    if form.validate_on_submit():
+        msg = Mensaje(autor=form.autor.data, contenido=form.contenido.data)
+        db.session.add(msg)
+        db.session.commit()
+        flash('Mensaje publicado', 'success')
+        return redirect(url_for('foro'))
+    mensajes = Mensaje.query.order_by(Mensaje.created_at.desc()).all()
+    return render_template('foro.html', form=form, mensajes=mensajes)
+
+@app.route('/tienda')
+def tienda():
+    productos = Producto.query.all()
+    return render_template('tienda.html', productos=productos)
+
+@app.route('/producto/<int:product_id>')
+def producto(product_id):
+    p = Producto.query.get_or_404(product_id)
+    return render_template('producto.html', producto=p)
+
+# Panel de administrador básico
+def admin_required(func):
+    from functools import wraps
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        if not current_user.is_authenticated or not current_user.is_admin:
+            flash('Acceso requerido: administrador', 'danger')
+            return redirect(url_for('login'))
+        return func(*args, **kwargs)
+    return wrapper
+
+@app.route('/admin', methods=['GET','POST'])
+@admin_required
+def admin():
+    eform = EventoForm(prefix='e')
+    pform = ProductoForm(prefix='p')
+    if eform.validate_on_submit() and eform.submit.data:
+        evt = Evento(titulo=eform.titulo.data, descripcion=eform.descripcion.data, fecha=eform.fecha.data)
+        db.session.add(evt)
+        db.session.commit()
+        flash('Evento creado', 'success')
+        return redirect(url_for('admin'))
+    if pform.validate_on_submit() and pform.submit.data:
+        prod = Producto(nombre=pform.nombre.data, descripcion=pform.descripcion.data, precio=pform.precio.data, stock=pform.stock.data)
+        db.session.add(prod)
+        db.session.commit()
+        flash('Producto creado', 'success')
+        return redirect(url_for('admin'))
+    eventos = Evento.query.order_by(Evento.fecha.asc()).all()
+    productos = Producto.query.all()
+    return render_template('admin.html', eform=eform, pform=pform, eventos=eventos, productos=productos)
+
+if __name__ == '__main__':
     app.run(debug=True)

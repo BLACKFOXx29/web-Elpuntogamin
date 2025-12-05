@@ -1,24 +1,30 @@
 {% extends "base.html" %}
 {% block content %}
-
-<h2 class="text-info">Foro</h2>
-
-<form method="POST">
-    {{ form.hidden_tag() }}
-    {{ form.contenido(class="form-control mb-3", placeholder="Escribe tu mensaje...") }}
-    <button class="btn btn-gamer" type="submit">Enviar</button>
+<h3 class="text-info">Foro del club</h3>
+<form method="post">
+  {{ form.hidden_tag() }}
+  <div class="mb-2">
+    {{ form.autor(class="form-control", placeholder="Tu nombre") }}
+  </div>
+  <div class="mb-2">
+    {{ form.contenido(class="form-control", rows=3, placeholder="Escribe tu mensaje") }}
+  </div>
+  <div>
+    {{ form.submit(class="btn btn-info") }}
+  </div>
 </form>
 
 <hr>
-
-{% for post in posts %}
-<div class="card p-3 mt-3 bg-dark" style="border:1px solid #222;">
-    <strong>{{ post.autor }}</strong>
-    <p class="mt-2">{{ post.contenido }}</p>
-    <small class="text-muted">{{ post.fecha }}</small>
+<div>
+  {% for m in mensajes %}
+    <div class="card mb-2 bg-dark" style="border:1px solid #333;">
+      <div class="card-body">
+        <small class="text-muted">{{ m.autor }} - {{ m.created_at.strftime('%d %b %Y %H:%M') }}</small>
+        <p>{{ m.contenido }}</p>
+      </div>
+    </div>
+  {% else %}
+    <p>No hay mensajes.</p>
+  {% endfor %}
 </div>
-{% else %}
-<p class="mt-3 text-muted">Aún no hay publicaciones en el foro.</p>
-{% endfor %}
-
 {% endblock %}

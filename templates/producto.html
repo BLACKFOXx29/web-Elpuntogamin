@@ -1,58 +1,17 @@
 {% extends "base.html" %}
 {% block content %}
+<h3 class="text-info">{{ producto.nombre }}</h3>
 <div class="row">
-  <div class="col-md-8">
-    <div class="card bg-dark" style="border:1px solid #222;">
-      {% if producto.imagen %}
-        <img src="{{ url_for('uploaded_file', filename=producto.imagen) }}" class="card-img-top" style="max-height:480px; object-fit:cover;">
-      {% else %}
-        <img src="https://via.placeholder.com/800x480?text=Sin+imagen" class="card-img-top" style="max-height:480px; object-fit:cover;">
-      {% endif %}
-      <div class="card-body">
-        <h2 class="text-info">{{ producto.nombre }}</h2>
-        <p class="text-muted mb-2">{{ producto.descripcion or 'Sin descripción' }}</p>
-
-        <div class="d-flex justify-content-between align-items-center">
-          <div>
-            <h4 class="text-white mb-0">${{ '%.2f'|format(producto.precio) }}</h4>
-            <small class="text-muted">Stock: {{ producto.stock }}</small>
-          </div>
-
-          <div>
-            {% if producto.stock > 0 %}
-              <form method="POST" action="{{ url_for('comprar_producto', product_id=producto.id) }}" style="display:inline;">
-                <button class="btn btn-gamer btn-sm" type="submit">Comprar</button>
-              </form>
-            {% else %}
-              <button class="btn btn-secondary btn-sm" disabled>Agotado</button>
-            {% endif %}
-            <a href="{{ url_for('tienda') }}" class="btn btn-sm btn-outline-info ms-2">Volver a tienda</a>
-          </div>
-        </div>
-
-      </div>
-    </div>
+  <div class="col-md-6">
+    {% if producto.imagen %}
+      <img src="{{ url_for('uploaded_file', filename=producto.imagen) }}" class="img-fluid">
+    {% endif %}
   </div>
-
-  <div class="col-md-4">
-    <div class="card p-3 bg-dark" style="border:1px solid #222;">
-      <h5 class="text-info">Detalles</h5>
-      <ul class="list-unstyled">
-        <li><strong>ID:</strong> {{ producto.id }}</li>
-        <li><strong>Precio:</strong> ${{ '%.2f'|format(producto.precio) }}</li>
-        <li><strong>Stock:</strong> {{ producto.stock }}</li>
-        <li><strong>Creado:</strong> {% if producto.created_at %}{{ producto.created_at.strftime('%d %b %Y') }}{% else %}N/A{% endif %}</li>
-      </ul>
-
-      {% if current_user.is_authenticated and current_user.is_admin %}
-        <div class="mt-3">
-          <a href="{{ url_for('admin_edit_product', product_id=producto.id) }}" class="btn btn-sm btn-warning">Editar</a>
-          <form method="POST" action="{{ url_for('admin_delete_product', product_id=producto.id) }}" style="display:inline;">
-            <button class="btn btn-sm btn-danger">Eliminar</button>
-          </form>
-        </div>
-      {% endif %}
-    </div>
+  <div class="col-md-6">
+    <p>{{ producto.descripcion }}</p>
+    <p><strong>Precio: ${{ '%.2f'|format(producto.precio) }}</strong></p>
+    <p>Stock: {{ producto.stock }}</p>
+    <button class="btn btn-info">Comprar (demo)</button>
   </div>
 </div>
 {% endblock %}
