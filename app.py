@@ -7,6 +7,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from datetime import datetime
 from werkzeug.utils import secure_filename
+from forms import EditProfileForm
 
 
 # --------------------------
@@ -118,6 +119,41 @@ def logout():
 @login_required
 def perfil():
     return render_template('perfil.html')
+
+# --------------------------
+# EDITAR PERFIL
+# --------------------------
+
+@app.route('/editar_perfil', methods=['GET', 'POST'])
+@login_required
+def editar_perfil():
+    form = EditProfileForm()
+
+    if form.validate_on_submit():
+
+        # Actualizar nombre, email y bio
+        current_user.username = form.username.data
+        current_user.email = form.email.data
+        current_user.bio = form.bio.data
+
+        # Procesar avatar nuevo
+        if form.avatar.data:
+            file = form.avatar.data
+            filename = secure_filename(f"avatar_{current_user.id}_{file.filename}")
+            filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file.save(filepath)
+            current_user.avatar = filename
+
+        db.session.commit()
+        flash("Perfil actualizado con éxito", "success")
+        return redirect(url_for('perfil'))
+
+    # Cargar valores actuales
+    form.username.data = current_user.username
+    form.email.data = current_user.email
+    form.bio.data = current_user.bio
+
+    return render_template('editar_perfil.html', form=form)
 
 
 # --------------------------

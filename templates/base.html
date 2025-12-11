@@ -7,7 +7,7 @@
     <title>El Punto Gaming</title>
 
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='fox.ico') }}">
 
     <!-- CSS global -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
@@ -35,6 +35,8 @@
             {% else %}
                 <a href="{{ url_for('login') }}">Iniciar sesión</a>
                 <a href="{{ url_for('register') }}" class="registrarse">Registrarse</a>
+            {% endif %}
+                <a href="{{ url_for('perfil') }}">Perfil</a>
             {% endif %}
         </nav>
     </div>

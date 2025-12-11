@@ -37,3 +37,10 @@ class ProductoForm(FlaskForm):
     precio = FloatField('Precio', validators=[DataRequired()])
     stock = IntegerField('Stock', validators=[DataRequired()])
     submit = SubmitField('Guardar producto')
+
+class EditProfileForm(FlaskForm):
+    username = StringField('Usuario', validators=[DataRequired()])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    bio = TextAreaField('Biografía', validators=[Length(max=500)])
+    avatar = FileField('Avatar')
+    submit = SubmitField('Guardar Cambios')
