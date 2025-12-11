@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="profile-edit-container">
+    <h2>Editar Perfil</h2>
+
+    <form method="POST" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+
+        <label>Nombre de usuario</label>
+        {{ form.username(class="input-gamer") }}
+
+        <label>Correo electrónico</label>
+        {{ form.email(class="input-gamer") }}
+
+        <label>Biografía</label>
+        {{ form.bio(class="input-gamer") }}
+
+        <label>Avatar</label>
+        {{ form.avatar(class="input-gamer") }}
+
+        <button type="submit" class="btn-gamer">Guardar cambios</button>
+    </form>
+</div>
+{% endblock %}
