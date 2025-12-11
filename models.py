@@ -1,17 +1,16 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
 from datetime import datetime
-from app import db
 
 db = SQLAlchemy()
 
-class User(UserMixin, db.Model):
+class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(200), nullable=False)
     is_admin = db.Column(db.Boolean, default=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
     avatar = db.Column(db.String(200), default='default_avatar.png')
     bio = db.Column(db.Text, default='Este usuario no tiene biografía.')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
