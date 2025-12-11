@@ -1,32 +1,74 @@
-<div id="carouselExampleControls" class="carousel slide mb-4" data-bs-ride="carousel">
-  <div class="carousel-inner">
+{% extends "base.html" %}
+{% block content %}
+<div class="row">
+  <div class="col-lg-8">
+    <!-- Carrusel -->
+    <div id="carouselExampleControls" class="carousel slide mb-4" data-bs-ride="carousel">
+      <div class="carousel-inner">
 
-    {% for img in imagenes %}
-    <div class="carousel-item {% if loop.index0 == 0 %}active{% endif %}">
-      <img src="{{ url_for('uploaded_file', filename='fox.png') }}" class="d-block w-100"
-           style="max-height:400px;object-fit:cover;">
-      <div class="carousel-caption d-none d-md-block">
-        <h5>{{ img.descripcion or 'El Punto Gaming' }}</h5>
+        {% for img in imagenes %}
+        <div class="carousel-item {% if loop.index0 == 0 %}active{% endif %}">
+          <img src="{{ url_for('uploaded_file', filename='fox.png') }}" class="d-block w-100" style="max-height:400px;object-fit:cover;">
+          <div class="carousel-caption d-none d-md-block">
+            <h5>{{ img.descripcion or 'El Punto Gaming' }}</h5>
+          </div>
+        </div>
+        {% endfor %}
+
+        {% if not imagenes %}
+        <div class="carousel-item active">
+          <img src="https://via.placeholder.com/800x400?text=El+Punto+Gaming" class="d-block w-100">
+        </div>
+        {% endif %}
+
       </div>
+      <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+        <span class="carousel-control-next-icon"></span>
+      </button>
     </div>
-    {% endfor %}
 
-    {% if not imagenes %}
-    <div class="carousel-item active">
-      <img src="{{ url_for('static', filename='fox.png') }}" class="d-block w-100"
-           style="max-height:400px;object-fit:cover;">
-      <div class="carousel-caption d-none d-md-block">
-        <h5>El Punto Gaming</h5>
-      </div>
-    </div>
-    {% endif %}
+    <h2 class="text-info">Bienvenido a El Punto Gaming</h2>
+    <p>Esta es la página de miembros del club de juegos más grande en toda República Dominicana. Únete, participa en eventos y comparte tu pasión por los videojuegos.</p>
 
+    <h4 class="mt-4">Próximos eventos</h4>
+    <ul class="list-group">
+      {% for e in eventos %}
+        <li class="list-group-item bg-dark text-light">
+          <strong>{{ e.titulo }}</strong> — {{ e.fecha.strftime('%d %b %Y %H:%M') }}<br>
+          <small>{{ e.descripcion }}</small>
+        </li>
+      {% else %}
+        <li class="list-group-item bg-dark text-light">No hay eventos programados.</li>
+      {% endfor %}
+    </ul>
   </div>
 
-  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
-    <span class="carousel-control-prev-icon"></span>
-  </button>
-  <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
-    <span class="carousel-control-next-icon"></span>
-  </button>
+  <div class="col-lg-4">
+    <div class="card bg-dark mb-3" style="border:2px solid #750079;">
+      <div class="card-body">
+        <h5 class="card-title text-info">Tienda destacada</h5>
+        {% for p in productos %}
+          <div class="mb-2">
+            <strong>{{ p.nombre }}</strong><br>
+            <small>Precio: ${{ '%.2f'|format(p.precio) }}</small>
+          </div>
+        {% else %}
+          <p>No hay productos</p>
+        {% endfor %}
+        <a href="{{ url_for('tienda') }}" class="btn btn-sm btn-outline-info mt-2">Ver tienda</a>
+      </div>
+    </div>
+
+    <div class="card bg-dark" style="border:2px solid #ffffff;">
+      <div class="card-body">
+        <h5 class="text-info">Únete al club</h5>
+        <p>Regístrate para participar en torneos y publicar en el foro.</p>
+        <a href="{{ url_for('register') }}" class="btn btn-info btn-sm">Registrarse</a>
+      </div>
+    </div>
+  </div>
 </div>
+{% endblock %}
