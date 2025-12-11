@@ -1,4 +1,122 @@
-body { background: #750079; color:#ddd; font-family: 'Segoe UI', Tahoma, sans-serif; }
-a { color: #5b01c2; }
-.btn-info { background: #5b01c2; border: none; }
-.card { border-radius: 12px; }
+/* Fondo general */
+body {
+    margin: 0;
+    padding: 0;
+    background: radial-gradient(circle at center, #111 0%, #000 100%);
+    font-family: 'Orbitron', sans-serif;
+    color: #e0eaff;
+}
+
+/* NAVBAR */
+.navbar-gamer {
+    width: 100%;
+    padding: 15px 0;
+    background: rgba(0,0,0,0.8);
+    border-bottom: 2px solid #0ff;
+    position: fixed;
+    top: 0;
+    z-index: 1000;
+}
+
+.navbar-content {
+    width: 90%;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo-navbar {
+    height: 40px;
+    filter: drop-shadow(0 0 5px #0ff);
+}
+
+nav a {
+    margin-left: 20px;
+    text-decoration: none;
+    color: #b3c9ff;
+    font-size: 14px;
+    transition: 0.2s;
+}
+
+nav a:hover {
+    color: #0ff;
+    text-shadow: 0 0 10px #0ff;
+}
+
+nav .registrarse {
+    color: #ff00ff;
+}
+
+nav .cerrar {
+    color: #ff4444;
+}
+
+/* HERO */
+.hero {
+    padding-top: 140px;
+    text-align: center;
+}
+
+.hero-logo {
+    width: 140px;
+    filter: drop-shadow(0 0 30px #0ff);
+}
+
+.hero-title {
+    margin-top: 20px;
+    font-size: 60px;
+    font-weight: 700;
+    color: #0ff;
+    text-shadow: 0 0 20px #0ff;
+}
+
+.hero-subtitle {
+    font-size: 20px;
+    color: #d5d5ff;
+    margin-top: -10px;
+}
+
+/* CONTENEDOR */
+.container {
+    width: 85%;
+    margin: 40px auto;
+    padding-bottom: 50px;
+}
+
+/* FOOTER */
+.footer-gamer {
+    text-align: center;
+    padding: 20px 0;
+    border-top: 2px solid #0ff;
+    background: rgba(0,0,0,0.6);
+    color: #99b3ff;
+    margin-top: 50px;
+}
+
+/* Botones gamer */
+.btn-gamer {
+    background: linear-gradient(90deg, #0ff, #00aaff);
+    border: none;
+    padding: 10px 18px;
+    color: #000;
+    font-weight: 700;
+    cursor: pointer;
+    text-transform: uppercase;
+    border-radius: 4px;
+    transition: 0.2s;
+}
+
+.btn-gamer:hover {
+    box-shadow: 0 0 20px #0ff;
+    transform: scale(1.05);
+}
+
+/* Tarjetas */
+.card {
+    background: rgba(0,0,0,0.6);
+    border: 1px solid #0ff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px #ffff;
+}
